@@ -1,0 +1,16 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="app_name">相机</string>
+    <string name="video">视频</string>
+    <string name="pictures">拍照</string>
+    <string name="panorama">全景</string>
+    <string name="portrait">人像</string>
+    <string name="scale_four_three">4:3</string>
+    <string name="scale_one_one">1:1</string>
+    <string name="quality_small">480p</string>
+    <string name="quality_large">720p</string>
+    <string name="permission_tip">提示</string>
+    <string name="permission_msg">申请权限失败! \n
+            你可以在设置界面中点击"权限"手动进行控制</string>
+    <string name="permission_btn_setting">去设置界面</string>
+    <string name="permission_btn_quit">退出</string>
+</resources>
