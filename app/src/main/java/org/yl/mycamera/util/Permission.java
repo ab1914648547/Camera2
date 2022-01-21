@@ -8,6 +8,9 @@ import android.os.Build;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+/**
+ * @author yl
+ */
 public class Permission {
     public static final int REQUEST_CODE = 5;
 

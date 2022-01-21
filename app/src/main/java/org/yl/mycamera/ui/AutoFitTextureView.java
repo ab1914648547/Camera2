@@ -10,6 +10,7 @@ import android.widget.FrameLayout;
 
 /**
  * A {@link TextureView} that can be adjusted to a specified aspect ratio.
+ * @author yl
  */
 public class AutoFitTextureView extends TextureView {
 

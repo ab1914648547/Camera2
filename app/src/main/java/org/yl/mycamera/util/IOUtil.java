@@ -12,6 +12,7 @@ import java.nio.channels.Channel;
 /**
  * IO工具类
  *
+ * @author yl
  */
 public class IOUtil {
 

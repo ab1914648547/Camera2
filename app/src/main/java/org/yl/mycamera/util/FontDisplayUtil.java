@@ -12,7 +12,7 @@ import android.view.WindowManager;
 import android.widget.LinearLayout;
 
 /**
- * Created by 冰淇淋 on 2016/9/24.
+ * @author yl
  */
 public class FontDisplayUtil{
     /**

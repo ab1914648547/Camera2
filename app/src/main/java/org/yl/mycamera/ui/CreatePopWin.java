@@ -11,6 +11,7 @@ import org.yl.mycamera.R;
 
 /**
  * Generate {@link PopupWindow}.
+ * @author yl
  */
 public class CreatePopWin {
     private Context mContext;

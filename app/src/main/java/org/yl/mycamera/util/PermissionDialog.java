@@ -7,6 +7,9 @@ import android.provider.Settings;
 
 import org.yl.mycamera.R;
 
+/**
+ * @author yl
+ */
 public class PermissionDialog extends CameraDialog{
 
     @Override
