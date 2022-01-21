@@ -1068,7 +1068,10 @@ public class CameraFragment extends AppCompatActivity implements View.OnClickLis
                 if (faceSwitch){
                     mFaceSwitch.setImageDrawable(face_on);
                     createCameraPreviewSession();
-                }else mFaceSwitch.setImageDrawable(face_off);
+                }else {
+                    mFaceSwitch.setImageDrawable(face_off);
+                    createCameraPreviewSession();
+                }
 
                 break;
 
