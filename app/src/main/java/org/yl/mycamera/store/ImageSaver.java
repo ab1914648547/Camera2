@@ -12,7 +12,6 @@ import java.io.OutputStream;
 
 /**
  * Save the taken pictures.
- * @author yl
  */
 public class ImageSaver implements Runnable {
     private byte[] mbytes;

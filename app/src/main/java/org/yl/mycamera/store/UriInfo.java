@@ -4,7 +4,6 @@ import android.net.Uri;
 
 /**
  * for uri information
- * @author yl
  */
 public interface UriInfo {
     /**

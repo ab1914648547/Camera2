@@ -80,9 +80,6 @@ import java.util.List;
 import java.util.Objects;
 
 
-/**
- * @author yl
- */
 public class CameraFragment extends AppCompatActivity implements View.OnClickListener, FaceDetectListener {
 
     private static final String TAG = "CameraTwo";
@@ -193,7 +190,6 @@ public class CameraFragment extends AppCompatActivity implements View.OnClickLis
                     Glide.with(CameraFragment.this).load(bitmap).error(R.drawable.ic_none).circleCrop().into(mPreviewImageView);
                     mPreviewImageView.setVisibility(View.VISIBLE);
                     break;
-                default:break;
             }
         }
     };
@@ -229,8 +225,7 @@ public class CameraFragment extends AppCompatActivity implements View.OnClickLis
 
     private RelativeLayout mRelArea;
 
-    /*保存人脸坐标信息*/
-    private ArrayList<RectF> mFacesRect = new ArrayList<>();
+    private ArrayList<RectF> mFacesRect = new ArrayList<>();//保存人脸坐标信息
 
     private FaceView faceView = null;
 
@@ -348,8 +343,7 @@ public class CameraFragment extends AppCompatActivity implements View.OnClickLis
 
     private FaceDetectListener mFaceDetectListener = null;
 
-    //人脸检测模式
-    private int mFaceDetectMode = CaptureResult.STATISTICS_FACE_DETECT_MODE_OFF;
+    private int mFaceDetectMode = CaptureResult.STATISTICS_FACE_DETECT_MODE_OFF;//人脸检测模式
 
     private Matrix mFaceDetectMatrix = new Matrix();
 
@@ -375,9 +369,7 @@ public class CameraFragment extends AppCompatActivity implements View.OnClickLis
                 mFaceDetectMode = CaptureRequest.STATISTICS_FACE_DETECT_MODE_FULL;
             }else if (i == (CaptureRequest.STATISTICS_FACE_DETECT_MODE_SIMPLE)){
                 mFaceDetectMode = CaptureRequest.STATISTICS_FACE_DETECT_MODE_SIMPLE;
-            }else {
-                mFaceDetectMode = CaptureRequest.STATISTICS_FACE_DETECT_MODE_OFF;
-            }
+            }else mFaceDetectMode = CaptureRequest.STATISTICS_FACE_DETECT_MODE_OFF;
         }
 
         if (mFaceDetectMode == CaptureRequest.STATISTICS_FACE_DETECT_MODE_OFF){
@@ -423,7 +415,6 @@ public class CameraFragment extends AppCompatActivity implements View.OnClickLis
                     exchange = true;
                 }
                 break;
-            default:break;
         }
 
         return exchange;
@@ -431,7 +422,6 @@ public class CameraFragment extends AppCompatActivity implements View.OnClickLis
 
     @RequiresApi(api = Build.VERSION_CODES.R)
     private void focusOnTouch(MotionEvent event) {
-
         focusRect = getFocusRect((int) event.getX(), (int) event.getY());
 
         mPreviewRequestBuilder.set(CaptureRequest.CONTROL_AF_REGIONS,
@@ -514,7 +504,6 @@ public class CameraFragment extends AppCompatActivity implements View.OnClickLis
                         }, 1000);
                         focusOnTouch(event);
                         break;
-                    default:break;
                 }
                 return true;
             }
@@ -777,17 +766,16 @@ public class CameraFragment extends AppCompatActivity implements View.OnClickLis
                                         mPreviewRequestBuilder.set(CaptureRequest.STATISTICS_FACE_DETECT_MODE,
                                                 CameraCharacteristics.STATISTICS_FACE_DETECT_MODE_SIMPLE);
                                         Log.e(TAG, "onConfigured: 人脸检测开始");
-                                    }
+                                    }else Log.e(TAG, "onConfigured: 无法开始人脸检测");
 
 
                                     //配置AE模式
                                     mFlash = new FlashLight(mPreviewRequestBuilder);
                                     mFlash.startFlashLight(mFlashStatus);
                                     mPreviewRequest = mPreviewRequestBuilder.build();
-                                    if (mCaptureSession != null) {
+                                    if (mCaptureSession != null)
                                         mCaptureSession.setRepeatingRequest(mPreviewRequest,
                                                 mCaptureCallback, mHandler);
-                                    }
                                 } catch (CameraAccessException e) {
                                     e.printStackTrace();
                                 }
@@ -959,7 +947,7 @@ public class CameraFragment extends AppCompatActivity implements View.OnClickLis
                     @Override
                     public void run() {
                         try {
-                            if (mCameraId.equals(cameraIdList[0])){
+                            if (mCameraId == cameraIdList[0]){
                                 mCameraId = cameraIdList[1];
                             }else {
                                 mCameraId = cameraIdList[0];
@@ -1080,9 +1068,7 @@ public class CameraFragment extends AppCompatActivity implements View.OnClickLis
                 if (faceSwitch){
                     mFaceSwitch.setImageDrawable(face_on);
                     createCameraPreviewSession();
-                }else {
-                    mFaceSwitch.setImageDrawable(face_off);
-                }
+                }else mFaceSwitch.setImageDrawable(face_off);
 
                 break;
 
@@ -1106,8 +1092,6 @@ public class CameraFragment extends AppCompatActivity implements View.OnClickLis
             case R.id.iv_delayed_three:
                 break;
             case R.id.iv_delayed_six:
-                break;
-            default:
                 break;
 
         }
@@ -1195,6 +1179,7 @@ public class CameraFragment extends AppCompatActivity implements View.OnClickLis
             @Override
             public void run() {
                 if (faces!=null && faces.length < 10){
+//                        new FaceView(this).setFaces(mFacesRect);
                     mFaceDetectListener.onFaceDetect(faces, mFacesRect);
                     Log.e(TAG, "run: 人脸检测实现"+mFacesRect);
                 }

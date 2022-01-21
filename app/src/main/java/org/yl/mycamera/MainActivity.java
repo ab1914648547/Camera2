@@ -18,9 +18,6 @@ import org.yl.mycamera.fragment.VideoFragment;
 import org.yl.mycamera.util.Permission;
 import org.yl.mycamera.util.PermissionDialog;
 
-/**
- * @author yl
- */
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     private TextView for_camera;
@@ -51,8 +48,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Intent intent = new Intent();
         intent.setClass(this, CameraFragment.class);
         startActivity(intent);
-        finish();
-
     }
 
     @Override

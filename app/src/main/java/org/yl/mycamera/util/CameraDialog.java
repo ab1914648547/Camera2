@@ -6,9 +6,6 @@ import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.os.Bundle;
 
-/**
- * @author yl
- */
 public abstract class CameraDialog extends DialogFragment implements DialogInterface.OnClickListener{
 
     abstract String getTitle();

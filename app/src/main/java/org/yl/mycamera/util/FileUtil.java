@@ -29,7 +29,6 @@ import java.util.zip.ZipOutputStream;
 /**
  * <h3>File工具类</h3>
  * <p>主要封装了一些对文件读写的操作
- * @author yl
  */
 public class FileUtil {
 

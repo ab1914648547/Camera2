@@ -8,7 +8,6 @@ import org.yl.mycamera.parameters.CameraParameter;
 
 /**
  * switch the status of AE mode according to what we want.
- * @author yl
  */
 public class FlashLight implements CameraParameter {
     private CaptureRequest.Builder mCaptureBuilder;

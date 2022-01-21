@@ -1,8 +1,5 @@
 package org.yl.mycamera.parameters;
 
-/**
- * @author yl
- */
 public interface CameraParameter {
     int FLASHON = 0;
     int FLASHAUTO = 1;

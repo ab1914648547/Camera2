@@ -17,9 +17,6 @@ import androidx.annotation.Nullable;
 
 import java.util.ArrayList;
 
-/**
- * @author yl
- */
 public class FaceView extends View {
 
     private Paint mPaint;

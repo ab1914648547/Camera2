@@ -73,9 +73,6 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 
-/**
- * @author yl
- */
 public class VideoFragment extends AppCompatActivity implements View.OnClickListener {
 
     private static final String TAG = "VideoTwo";
@@ -250,7 +247,6 @@ public class VideoFragment extends AppCompatActivity implements View.OnClickList
      * Handle message for updating and showing thumbnail.
      */
     private Handler mUiHandler = new Handler(Looper.getMainLooper()) {
-        @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case UPDATE_TEXTVIEW:
@@ -844,7 +840,6 @@ public class VideoFragment extends AppCompatActivity implements View.OnClickList
         }
     }
 
-    @Override
     @RequiresApi(api = Build.VERSION_CODES.R)
     public void onClick(View v) {
         switch (v.getId()) {
@@ -920,6 +915,16 @@ public class VideoFragment extends AppCompatActivity implements View.OnClickList
                 tvQualityLarge.setOnClickListener(this);
                 break;
             case R.id.settings:
+//                mCreatePopWin = new CreatePopWin(Objects.requireNonNull(VideoFragment.this).getBaseContext(), mSettings);
+//                View settingsLayout = mCreatePopWin.createPopupWindow(R.layout.settings_popupwindow);
+//                ImageView ivLocation = settingsLayout.findViewById(R.id.iv_location);
+//                ImageView ivQRcode = settingsLayout.findViewById(R.id.iv_QR_code);
+//                ImageView ivDelayedThree = settingsLayout.findViewById(R.id.iv_delayed_three);
+//                ImageView ivDelayedSix = settingsLayout.findViewById(R.id.iv_delayed_six);
+//                ivLocation.setOnClickListener(this);
+//                ivQRcode.setOnClickListener(this);
+//                ivDelayedThree.setOnClickListener(this);
+//                ivDelayedSix.setOnClickListener(this);
                 break;
             case R.id.flash_close:
                 mFlashPop.dismiss();
@@ -964,6 +969,7 @@ public class VideoFragment extends AppCompatActivity implements View.OnClickList
                 }
                 break;
             case R.id.for_camera:
+
                 closeSession();
                 closeCamera();
                 new Handler().postDelayed(new Runnable() {
@@ -975,7 +981,6 @@ public class VideoFragment extends AppCompatActivity implements View.OnClickList
                     }
                 }, 1000);
                 break;
-            default:break;
         }
     }
 
