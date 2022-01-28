@@ -36,31 +36,25 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Looper;
 import android.os.Message;
-import android.util.ArraySet;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.Size;
 import android.util.SparseIntArray;
-import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.Surface;
 import android.view.TextureView;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
-import androidx.fragment.app.Fragment;
 import com.bumptech.glide.Glide;
-
 import org.yl.mycamera.R;
 import org.yl.mycamera.functions.FlashLight;
 import org.yl.mycamera.parameters.CameraParameter;
@@ -71,8 +65,6 @@ import org.yl.mycamera.ui.CreatePopWin;
 import org.yl.mycamera.ui.FaceView;
 import org.yl.mycamera.util.FaceDetectListener;
 import org.yl.mycamera.util.FontDisplayUtil;
-
-import java.lang.reflect.Array;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -80,6 +72,9 @@ import java.util.List;
 import java.util.Objects;
 
 
+/**
+ * @author yl
+ */
 public class CameraFragment extends AppCompatActivity implements View.OnClickListener, FaceDetectListener {
 
     private static final String TAG = "CameraTwo";
@@ -133,7 +128,7 @@ public class CameraFragment extends AppCompatActivity implements View.OnClickLis
     /**
      * 标记预览的大小。
      */
-    private Size mPreviewSize, mCaptureSize;
+    private Size mPreviewSize;
     private ImageView mPreviewImageView;
 
     /**
@@ -169,7 +164,7 @@ public class CameraFragment extends AppCompatActivity implements View.OnClickLis
     /**
      * 获取Uri的接口。
      */
-    private UriInfo mUriCallBack = new UriInfo() {
+    private final UriInfo mUriCallBack = new UriInfo() {
         @Override
         public void UriInfo(Uri uri) {
             mImageUri = uri;
@@ -216,11 +211,10 @@ public class CameraFragment extends AppCompatActivity implements View.OnClickLis
     private int mCurrentState = STATE_PREVIEW;
 
     /**
-     *保存图片的线程。
+     * 保存图片的线程。
      */
     private Handler mBackgroundHandler;
     private HandlerThread mBackgroundHandlerThread;
-
 
 
     private RelativeLayout mRelArea;
@@ -228,7 +222,6 @@ public class CameraFragment extends AppCompatActivity implements View.OnClickLis
     private ArrayList<RectF> mFacesRect = new ArrayList<>();//保存人脸坐标信息
 
     private FaceView faceView = null;
-
 
 
     /**
@@ -349,32 +342,30 @@ public class CameraFragment extends AppCompatActivity implements View.OnClickLis
 
     int mCameraSensorOrientation = 0;
 
-    private void initFaceDetect(){
+    private void initFaceDetect() {
         CameraCharacteristics characteristics = null;
         try {
             characteristics = mCameraManager.getCameraCharacteristics(String.valueOf(mCameraId));
         } catch (CameraAccessException e) {
             e.printStackTrace();
         }
-
-
         mCameraSensorOrientation = characteristics.get(CameraCharacteristics.SENSOR_ORIENTATION);
 
         Integer faceCount = characteristics.get(CameraCharacteristics.STATISTICS_INFO_MAX_FACE_COUNT);
 
         int[] faceModes = characteristics.get(CameraCharacteristics.STATISTICS_INFO_AVAILABLE_FACE_DETECT_MODES);
 
-        for (int i: faceModes) {
-            if (i == CaptureRequest.STATISTICS_FACE_DETECT_MODE_FULL){
+        for (int i : faceModes) {
+            if (i == CaptureRequest.STATISTICS_FACE_DETECT_MODE_FULL) {
                 mFaceDetectMode = CaptureRequest.STATISTICS_FACE_DETECT_MODE_FULL;
-            }else if (i == (CaptureRequest.STATISTICS_FACE_DETECT_MODE_SIMPLE)){
+            } else if (i == (CaptureRequest.STATISTICS_FACE_DETECT_MODE_SIMPLE)) {
                 mFaceDetectMode = CaptureRequest.STATISTICS_FACE_DETECT_MODE_SIMPLE;
-            }else mFaceDetectMode = CaptureRequest.STATISTICS_FACE_DETECT_MODE_OFF;
+            } else {
+                mFaceDetectMode = CaptureRequest.STATISTICS_FACE_DETECT_MODE_OFF;
+            }
         }
-
-        if (mFaceDetectMode == CaptureRequest.STATISTICS_FACE_DETECT_MODE_OFF){
+        if (mFaceDetectMode == CaptureRequest.STATISTICS_FACE_DETECT_MODE_OFF) {
             Log.e(TAG, "initFaceDetect: 相机硬件不支持人脸检测 " + mFaceDetectMode);
-
             return;
         }
 
@@ -384,34 +375,33 @@ public class CameraFragment extends AppCompatActivity implements View.OnClickLis
 
         float scaledHeight = mPreviewSize.getHeight() / (float) activeArraySizeRect.height();
 
-        boolean mirror = mCameraId == String.valueOf(CameraCharacteristics.LENS_FACING_FRONT) ;
+        boolean mirror = mCameraId == String.valueOf(CameraCharacteristics.LENS_FACING_FRONT);
 
-        mFaceDetectMatrix.setRotate((float)mCameraSensorOrientation);
+        mFaceDetectMatrix.setRotate((float) mCameraSensorOrientation);
 
         mFaceDetectMatrix.postScale(mirror ? scaledWidth : scaledHeight, scaledHeight);
 
         if (exchangeWidthAndHeight(CameraFragment.this.getWindowManager().getDefaultDisplay().getRotation(),
-                characteristics.get(CameraCharacteristics.SENSOR_ORIENTATION))){
+                characteristics.get(CameraCharacteristics.SENSOR_ORIENTATION))) {
             mFaceDetectMatrix.postTranslate((float) mPreviewSize.getHeight(), (float) mPreviewSize.getWidth());
         }
 
 
-
-
     }
-    private boolean exchangeWidthAndHeight(int displayRotation, int sensorOrientation){
+
+    private boolean exchangeWidthAndHeight(int displayRotation, int sensorOrientation) {
         boolean exchange = false;
 
-        switch (displayRotation){
+        switch (displayRotation) {
             case Surface.ROTATION_0:
             case Surface.ROTATION_180:
-                if (sensorOrientation == 90 || sensorOrientation == 270){
+                if (sensorOrientation == 90 || sensorOrientation == 270) {
                     exchange = true;
                 }
                 break;
             case Surface.ROTATION_90:
             case Surface.ROTATION_270:
-                if (sensorOrientation == 0 || sensorOrientation == 180){
+                if (sensorOrientation == 0 || sensorOrientation == 180) {
                     exchange = true;
                 }
                 break;
@@ -445,7 +435,7 @@ public class CameraFragment extends AppCompatActivity implements View.OnClickLis
         }
     }
 
-    private TextView for_video;
+    private TextView mForVideo;
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -460,8 +450,8 @@ public class CameraFragment extends AppCompatActivity implements View.OnClickLis
         mSettings = this.findViewById(R.id.settings);
         mPreviewImageView = this.findViewById(R.id.image_save);
         mFaceSwitch = this.findViewById(R.id.face_switch);
-        for_video = this.findViewById(R.id.for_video);
-        for_video.setOnClickListener(this);
+        mForVideo = this.findViewById(R.id.for_video);
+        mForVideo.setOnClickListener(this);
         ImageView cameraRotation = this.findViewById(R.id.camera_rotation);
         cameraRotation.setOnClickListener(this);
         imageView.setOnClickListener(this);
@@ -487,13 +477,13 @@ public class CameraFragment extends AppCompatActivity implements View.OnClickLis
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 int action = event.getAction();
-                switch (action){
+                switch (action) {
                     case (MotionEvent.ACTION_DOWN):
                         break;
                     case MotionEvent.ACTION_UP:
 
-                        mRelArea.setX(event.getX()-45);
-                        mRelArea.setY(event.getY()+100);
+                        mRelArea.setX(event.getX() - 45);
+                        mRelArea.setY(event.getY() + 100);
 
                         mRelArea.setVisibility(View.VISIBLE);
                         new Handler().postDelayed(new Runnable() {
@@ -504,6 +494,7 @@ public class CameraFragment extends AppCompatActivity implements View.OnClickLis
                         }, 1000);
                         focusOnTouch(event);
                         break;
+                    default:break;
                 }
                 return true;
             }
@@ -512,10 +503,11 @@ public class CameraFragment extends AppCompatActivity implements View.OnClickLis
 
     /**
      * 获取点击区域
+     *
      * @param x：手指触摸点x坐标
-     * @param y: 手指触摸点y坐标
+     * @param y:         手指触摸点y坐标
      */
-    private Rect getFocusRect(int x, int y){
+    private Rect getFocusRect(int x, int y) {
 
         int screenW = FontDisplayUtil.getScreenWidth(this);//获取屏幕长度
         int screenH = FontDisplayUtil.getScreenHeight(this);//获取屏幕宽度
@@ -540,17 +532,17 @@ public class CameraFragment extends AppCompatActivity implements View.OnClickLis
 
         Rect rect1 = new Rect((int) focusY, (int) focusX + cutDx, (int) focusY + height, (int) focusX + cutDx + width);
 
-        if (rect1.top < 0){
-            rect1.top*=-1;
+        if (rect1.top < 0) {
+            rect1.top *= -1;
         }
-        if (rect1.right < 0){
+        if (rect1.right < 0) {
             rect1.right *= -1;
         }
-        if (rect1.bottom < 0){
+        if (rect1.bottom < 0) {
             rect1.bottom *= -1;
         }
 
-        if (rect1.height() < 0){
+        if (rect1.height() < 0) {
             int t = rect1.bottom;
             rect1.bottom = rect1.top;
             rect1.top = t;
@@ -569,6 +561,7 @@ public class CameraFragment extends AppCompatActivity implements View.OnClickLis
         closeSession();
         super.onPause();
     }
+
     @Override
     public void onStop() {
         closeCamera();
@@ -601,9 +594,10 @@ public class CameraFragment extends AppCompatActivity implements View.OnClickLis
 
     }
 
-    public static CameraFragment newInstance(){
+    public static CameraFragment newInstance() {
         return new CameraFragment();
     }
+
     /**
      * Open camera.
      *
@@ -611,6 +605,7 @@ public class CameraFragment extends AppCompatActivity implements View.OnClickLis
      * @throws CameraAccessException
      */
     private String[] cameraIdList;
+
     private void openCamera(double ratio) throws CameraAccessException {
         setUpCameraOutputs(ratio);
         forOpenCamera();
@@ -618,7 +613,6 @@ public class CameraFragment extends AppCompatActivity implements View.OnClickLis
 
     /**
      * The callback of {@link CameraCaptureSession}.
-     *
      */
     private CameraCaptureSession.CaptureCallback mCaptureCallback
             = new CameraCaptureSession.CaptureCallback() {
@@ -670,6 +664,7 @@ public class CameraFragment extends AppCompatActivity implements View.OnClickLis
                     }
                     break;
                 }
+                default:break;
             }
         }
 
@@ -693,6 +688,8 @@ public class CameraFragment extends AppCompatActivity implements View.OnClickLis
             if (faceSwitch && (mFaceDetectMode != CaptureRequest.STATISTICS_FACE_DETECT_MODE_OFF)) {
                 Log.e(TAG, "onCaptureCompleted: 处理人脸信息");
                 handleFaces(result);
+            } else {
+                handleFaces(null);
             }
             process(result);
         }
@@ -708,7 +705,6 @@ public class CameraFragment extends AppCompatActivity implements View.OnClickLis
                     CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER_START);
             // 告诉#mCaptureCallback等待预捕获序列被设置。
             mCurrentState = STATE_WAITING_PRECAPTURE;
-
 
 
             mCaptureSession.capture(mPreviewRequestBuilder.build(), mCaptureCallback,
@@ -728,7 +724,7 @@ public class CameraFragment extends AppCompatActivity implements View.OnClickLis
             /**
              * 初始化人脸检测相关信息
              */
-            if (faceSwitch){
+            if (faceSwitch) {
 
                 initFaceDetect();
                 Log.e(TAG, "setUpCameraOutputs: 初始化人脸检测相关信息");
@@ -752,30 +748,24 @@ public class CameraFragment extends AppCompatActivity implements View.OnClickLis
 
                         @Override
                         public void onConfigured(@NonNull CameraCaptureSession session) {
-                            if (mCameraDevice == null) {
-                                return;
-                            } else {
+                            if (mCameraDevice != null) {
                                 mCaptureSession = session;
                                 try {
                                     mPreviewRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE,
                                             CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_PICTURE);
-                                    Log.e(TAG, "onConfigured: "+faceSwitch +" 人脸检测" );
-
-                                    if (faceSwitch && (mFaceDetectMode != CaptureRequest.STATISTICS_FACE_DETECT_MODE_OFF)){//人脸检测
+                                    if (faceSwitch && (mFaceDetectMode != CaptureRequest.STATISTICS_FACE_DETECT_MODE_OFF)) {//人脸检测
 //                                    if (faceSwitch){//人脸检测
                                         mPreviewRequestBuilder.set(CaptureRequest.STATISTICS_FACE_DETECT_MODE,
                                                 CameraCharacteristics.STATISTICS_FACE_DETECT_MODE_SIMPLE);
-                                        Log.e(TAG, "onConfigured: 人脸检测开始");
-                                    }else Log.e(TAG, "onConfigured: 无法开始人脸检测");
-
-
+                                    }
                                     //配置AE模式
                                     mFlash = new FlashLight(mPreviewRequestBuilder);
                                     mFlash.startFlashLight(mFlashStatus);
                                     mPreviewRequest = mPreviewRequestBuilder.build();
-                                    if (mCaptureSession != null)
+                                    if (mCaptureSession != null) {
                                         mCaptureSession.setRepeatingRequest(mPreviewRequest,
                                                 mCaptureCallback, mHandler);
+                                    }
                                 } catch (CameraAccessException e) {
                                     e.printStackTrace();
                                 }
@@ -834,7 +824,6 @@ public class CameraFragment extends AppCompatActivity implements View.OnClickLis
             faceView.setLayoutParams(layoutParams);
 
 
-
             //调整宽度和高度匹配实际的宽度和高度
             int orientation = getResources().getConfiguration().orientation;
             if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
@@ -845,7 +834,7 @@ public class CameraFragment extends AppCompatActivity implements View.OnClickLis
                         mPreviewSize.getHeight(), mPreviewSize.getWidth());
             }
             Size[] pictureSizes = streamConfigurationMap.getOutputSizes(ImageFormat.JPEG);
-            mCaptureSize = chooseOptimalSize(pictureSizes, ratio, widthPixels);
+            Size mCaptureSize = chooseOptimalSize(pictureSizes, ratio, widthPixels);
 
             //我们通过ImageReader获取图片数据
             mImageReader = ImageReader.newInstance(mCaptureSize.getWidth(), mCaptureSize.getHeight(),
@@ -947,9 +936,9 @@ public class CameraFragment extends AppCompatActivity implements View.OnClickLis
                     @Override
                     public void run() {
                         try {
-                            if (mCameraId == cameraIdList[0]){
+                            if (mCameraId == cameraIdList[0]) {
                                 mCameraId = cameraIdList[1];
-                            }else {
+                            } else {
                                 mCameraId = cameraIdList[0];
                             }
                             forOpenCamera();
@@ -1065,10 +1054,10 @@ public class CameraFragment extends AppCompatActivity implements View.OnClickLis
                 int ic_face_off = R.drawable.ic_face_off;
                 @SuppressLint("UseCompatLoadingForDrawables") Drawable face_on = Objects.requireNonNull(this).getDrawable(ic_face_on);
                 @SuppressLint("UseCompatLoadingForDrawables") Drawable face_off = this.getDrawable(ic_face_off);
-                if (faceSwitch){
+                if (faceSwitch) {
                     mFaceSwitch.setImageDrawable(face_on);
                     createCameraPreviewSession();
-                }else {
+                } else {
                     mFaceSwitch.setImageDrawable(face_off);
                     createCameraPreviewSession();
                 }
@@ -1130,19 +1119,18 @@ public class CameraFragment extends AppCompatActivity implements View.OnClickLis
             mCaptureSession.abortCaptures();
             mCaptureSession.capture(captureRequestBuilder.build(),
                     new CameraCaptureSession.CaptureCallback() {
-                @Override
-                public void onCaptureCompleted(@NonNull CameraCaptureSession session,
-                                               @NonNull CaptureRequest request,
-                                               @NonNull TotalCaptureResult result) {
-                    Log.e(TAG, "图片已被保存!");
-                    unlockFocus();
-                }
-            }, null);
+                        @Override
+                        public void onCaptureCompleted(@NonNull CameraCaptureSession session,
+                                                       @NonNull CaptureRequest request,
+                                                       @NonNull TotalCaptureResult result) {
+                            Log.e(TAG, "图片已被保存!");
+                            unlockFocus();
+                        }
+                    }, null);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-
 
 
     /**
@@ -1154,21 +1142,28 @@ public class CameraFragment extends AppCompatActivity implements View.OnClickLis
 
         Log.e(TAG, "handleFaces: start---------------人脸检测实现");
 
+        if (result == null) {
+            return;
+        }
         Face[] faces = result.get(CaptureResult.STATISTICS_FACES);
         Rect cropRegion = result.get(CaptureResult.SCALER_CROP_REGION);
 
 
-
         mFacesRect.clear();
 
-        if (faces != null){
-            for (Face face:faces) {
+        if (faces != null) {
+            for (Face face : faces) {
                 Rect bounds = face.getBounds();
-                float left = (float) (bounds.left * (2/3.0));
-                float top = (float) (bounds.top * (2/3.0));
-                float right = (float) (bounds.right * (2/3.0));
-                float bottom = (float) (bounds.bottom * (2/3.0));
-                RectF rawFaceRect = new RectF((float) left + 230 , (float) top + 1250 , (float) right + 130, (float) bottom+1150);
+                float left = (float) (bounds.left);
+                float top = (float) (bounds.top);
+                float right = (float) (bounds.right);
+                float bottom = (float) (bounds.bottom);
+//                float left = (float) (bounds.left * (2/3.0));
+//                float top = (float) (bounds.top * (2/3.0));
+//                float right = (float) (bounds.right * (2/3.0));
+//                float bottom = (float) (bounds.bottom * (2/3.0));
+                RectF rawFaceRect = new RectF((float) left + 1100, (float) top, (float) right + 1100, (float) bottom);
+//                RectF rawFaceRect = new RectF((float) left + 230 , (float) top + 1250 , (float) right + 130, (float) bottom+1150);
                 mFaceDetectMatrix.mapRect(rawFaceRect);
                 RectF resultFaceRect = CameraCharacteristics.LENS_FACING_BACK == CaptureRequest.LENS_FACING_FRONT ?
                         rawFaceRect :
@@ -1181,14 +1176,14 @@ public class CameraFragment extends AppCompatActivity implements View.OnClickLis
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                if (faces!=null && faces.length < 10){
+                if (faces != null && faces.length < 10) {
 //                        new FaceView(this).setFaces(mFacesRect);
                     mFaceDetectListener.onFaceDetect(faces, mFacesRect);
-                    Log.e(TAG, "run: 人脸检测实现"+mFacesRect);
+                    Log.e(TAG, "run: 人脸检测实现" + mFacesRect);
                 }
             }
         }, 500);
-        Log.e(TAG, "handleFaces: 人脸is------------------------------------ "+ faces.length);
+        Log.e(TAG, "handleFaces: 人脸is------------------------------------ " + faces.length);
 
     }
 
@@ -1258,7 +1253,7 @@ public class CameraFragment extends AppCompatActivity implements View.OnClickLis
      * Stop the preview handler.
      */
     private void stopHandlerThread() {
-        if (mHandlerThread != null){
+        if (mHandlerThread != null) {
 
             mHandlerThread.quitSafely();
             try {
@@ -1303,12 +1298,12 @@ public class CameraFragment extends AppCompatActivity implements View.OnClickLis
 
     @Override
     public void onFaceDetect(Face[] faces, ArrayList<RectF> faceRect) {
-        if (faces != null && faceRect != null){
+        if (faces != null && faceRect != null && faceSwitch) {
             faceView.setFaces(faceRect);
         }
     }
 
-    private void setFaceDetectListener(FaceDetectListener listener){
+    private void setFaceDetectListener(FaceDetectListener listener) {
         this.mFaceDetectListener = listener;
     }
 }

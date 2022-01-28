@@ -75,7 +75,7 @@
             android:layout_width="@dimen/picture_radius"
             android:layout_height="@dimen/picture_radius"
             android:layout_gravity="center"
-            android:src="@drawable/selector_camera_btn" />
+            android:src="@drawable/selector_video_btn" />
 
         <ImageView
             android:id="@+id/camera_rotation"

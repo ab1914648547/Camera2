@@ -17,6 +17,9 @@ import androidx.annotation.Nullable;
 
 import java.util.ArrayList;
 
+/**
+ * @author yl
+ */
 public class FaceView extends View {
 
     private Paint mPaint;
@@ -59,8 +62,10 @@ public class FaceView extends View {
     }
 
     public void setFaces(ArrayList<RectF> faces){
-        this.mFaces = faces;
-        postInvalidate();
-        invalidate();
+        if (faces != null){
+            this.mFaces = faces;
+            postInvalidate();
+            invalidate();
+        }
     }
 }
