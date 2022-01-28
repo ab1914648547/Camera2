@@ -322,7 +322,7 @@ public class VideoFragment extends AppCompatActivity implements View.OnClickList
         videoStop.setOnClickListener(this);
         videoCapture.setOnClickListener(this);
 
-        mPreviewSize = new Size(1080,1440);
+//        mPreviewSize = new Size(1080,1440);
 
         mProfile = getCamcorderProfile(mCameraId, CamcorderProfile.QUALITY_480P);
     }
@@ -485,8 +485,8 @@ public class VideoFragment extends AppCompatActivity implements View.OnClickList
             StreamConfigurationMap map = cameraCharacteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
 
             mVideoSize = chooseVideoSize(streamConfigurationMap.getOutputSizes(MediaRecorder.class), ratio);
-//            mPreviewSize = chooseOptimalSize(streamConfigurationMap.getOutputSizes(SurfaceTexture.class),
-//                    ratio, mVideoSize);
+            mPreviewSize = chooseOptimalSize(streamConfigurationMap.getOutputSizes(SurfaceTexture.class),
+                    ratio, mVideoSize);
 
 
             //To adjust width and height matching the real width and height.
@@ -868,14 +868,22 @@ public class VideoFragment extends AppCompatActivity implements View.OnClickList
                 }
                 break;
             case R.id.camera_rotation:
-                try {
-                    stopRecord();
-                    closeCamera();
-                    mCameraId ^= 1;
-                    forOpenCamera(mCameraId);
-                } catch (CameraAccessException e) {
-                    e.printStackTrace();
-                }
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            if (mCameraId == 0){
+                                mCameraId = 1;
+                            }else {
+                                mCameraId = 0;
+                            }
+                            forOpenCamera(mCameraId);
+
+                        } catch (CameraAccessException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }, 500);
                 break;
             case R.id.video_save:
                 Intent startGallery = new Intent(Intent.ACTION_VIEW);

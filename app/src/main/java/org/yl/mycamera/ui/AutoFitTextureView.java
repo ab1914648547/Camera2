@@ -33,8 +33,8 @@ public class AutoFitTextureView extends TextureView {
         if (width < 0 || height < 0) {
             throw new IllegalArgumentException("Size cannot be negative.");
         }
-        mRatioWidth = width;
-        mRatioHeight = height;
+        mRatioWidth = height;
+        mRatioHeight = width;
         requestLayout();
     }
 
@@ -48,12 +48,9 @@ public class AutoFitTextureView extends TextureView {
         } else {
             if (width < height * mRatioWidth / mRatioHeight) {
                 setMeasuredDimension(width, (width * mRatioHeight / mRatioWidth));
-                Log.e(TAG, "onMeasure: "+ width + " " + (width * mRatioHeight / mRatioWidth));
 //                setMeasuredDimension(800, 1200);
             } else {
                 setMeasuredDimension(height * mRatioWidth / mRatioHeight, height);
-
-                Log.e(TAG, "onMeasure: "+ height * mRatioWidth / mRatioHeight + " " + height);
 //                setMeasuredDimension(1600, 2400);
             }
         }

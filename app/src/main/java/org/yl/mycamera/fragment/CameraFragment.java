@@ -473,7 +473,7 @@ public class CameraFragment extends AppCompatActivity implements View.OnClickLis
 
         faceView = this.findViewById(R.id.faceView);
 
-        mPreviewSize = new Size(1080,1440);
+//        mPreviewSize = new Size(1080,1440);
 
         this.setFaceDetectListener(this);
 
@@ -824,7 +824,7 @@ public class CameraFragment extends AppCompatActivity implements View.OnClickLis
             DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
 
             int widthPixels = displayMetrics.widthPixels;
-//            mPreviewSize = chooseOptimalSize(sizes, ratio, widthPixels);
+            mPreviewSize = chooseOptimalSize(sizes, ratio, widthPixels);
 
 
             faceView.setLayoutParams(new RelativeLayout.LayoutParams(mTextureView.getWidth(), 540));
