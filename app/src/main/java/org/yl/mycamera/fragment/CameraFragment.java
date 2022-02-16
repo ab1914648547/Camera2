@@ -266,7 +266,6 @@ public class CameraFragment extends AppCompatActivity implements View.OnClickLis
         public void onSurfaceTextureAvailable(@NonNull SurfaceTexture surface, int width, int height) {
             try {
                 openCamera(mCurrentRatio);
-                Log.e(TAG, "相机准备好");
             } catch (CameraAccessException e) {
                 e.printStackTrace();
             }
@@ -274,7 +273,6 @@ public class CameraFragment extends AppCompatActivity implements View.OnClickLis
 
         @Override
         public void onSurfaceTextureSizeChanged(@NonNull SurfaceTexture surface, int width, int height) {
-            Log.e(TAG, "表面尺寸改变了");
         }
 
         @Override
@@ -294,7 +292,6 @@ public class CameraFragment extends AppCompatActivity implements View.OnClickLis
     private final CameraDevice.StateCallback mStateCallback = new CameraDevice.StateCallback() {
         @Override
         public void onOpened(@NonNull CameraDevice camera) {
-            Log.e(TAG, "Camera can open.");
             mCameraDevice = camera;
             mHandlerThread = new HandlerThread("Camera2");
             mHandlerThread.start();
@@ -307,7 +304,6 @@ public class CameraFragment extends AppCompatActivity implements View.OnClickLis
 
         @Override
         public void onDisconnected(@NonNull CameraDevice camera) {
-            Log.e(TAG, "相机已经断开连接。");
             if (null != mCameraDevice) {
                 mCameraDevice.close();
                 mCameraDevice = null;
@@ -316,7 +312,6 @@ public class CameraFragment extends AppCompatActivity implements View.OnClickLis
 
         @Override
         public void onError(@NonNull CameraDevice camera, int error) {
-            Log.e(TAG, "摄像机出现了一些错误");
             if (null != mCameraDevice) {
                 mCameraDevice.close();
                 mCameraDevice = null;
@@ -365,7 +360,6 @@ public class CameraFragment extends AppCompatActivity implements View.OnClickLis
             }
         }
         if (mFaceDetectMode == CaptureRequest.STATISTICS_FACE_DETECT_MODE_OFF) {
-            Log.e(TAG, "initFaceDetect: 相机硬件不支持人脸检测 " + mFaceDetectMode);
             return;
         }
 
